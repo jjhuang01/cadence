@@ -12,6 +12,12 @@ codegen-units = 256
 opt-level = 0
 debug = 1
 overflow-checks = false
+# cdylib 默认 panic=abort；显式改回 unwind 让 tokio 的 catch_unwind 能捕获 panic
+panic = "unwind"
+
+[profile.release]
+# cdylib 默认 panic=abort；显式改回 unwind 让 tokio 的 catch_unwind 能捕获 panic
+panic = "unwind"
 
 [build]
 # 并行编译任务数（默认 CPU 核心数）

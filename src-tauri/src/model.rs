@@ -33,9 +33,14 @@ fn read_id3_meta(path: &Path) -> (Option<String>, Option<String>, Option<f64>) {
         .and_then(|t| t.duration())
         .map(|ms| ms as f64 / 1000.0)
         .or_else(|| {
-            mp3_duration::from_path(path)
-                .ok()
-                .map(|d| d.as_secs_f64())
+            // mp3_duration 0.1.x 在某些损坏/特殊 MP3 上会 panic（除零、越界）
+            // 用 catch_unwind 隔离，防止 panic 传播到 spawn_blocking 外层
+            std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                mp3_duration::from_path(path)
+            }))
+            .ok()
+            .and_then(|r| r.ok())
+            .map(|d| d.as_secs_f64())
         });
     (title, artist, duration_secs)
 }

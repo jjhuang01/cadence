@@ -475,7 +475,7 @@ pub fn run() {
             http_client: reqwest::Client::builder()
                 .timeout(std::time::Duration::from_secs(15))
                 .build()
-                .expect("failed to build reqwest client"),
+                .unwrap_or_else(|_| reqwest::Client::new()),
         })
         .register_asynchronous_uri_scheme_protocol("stream", |_ctx, request, responder| {
             let uri = request.uri().to_string();
