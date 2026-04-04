@@ -1,3 +1,3 @@
 fn main() {
-    tips_lib::run()
+    cadence_lib::run()
 }

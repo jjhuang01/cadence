@@ -1,10 +1,10 @@
 [package]
-name = "tips"
+name = "cadence"
 version = "0.1.0"
 edition = "2021"
 
 [lib]
-name = "tips_lib"
+name = "cadence_lib"
 crate-type = ["cdylib", "rlib"]
 
 [build-dependencies]
