@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cadence — UI Wireframe</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    padding: 32px;
+    min-height: 100vh;
+  }
+
+  /* ── Page header ── */
+  .page-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+    letter-spacing: -0.4px;
+  }
+  .page-subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 36px;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #666;
+    margin-bottom: 12px;
+    margin-top: 40px;
+  }
+
+  /* ── App shell ── */
+  .app-shell {
+    display: flex;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.7);
+    border: 1px solid rgba(255,255,255,0.08);
+    background: #f5f5f5;
+    position: relative;
+  }
+
+  /* Traffic lights */
+  .traffic-lights {
+    display: flex;
+    gap: 6px;
+    padding: 14px 16px 6px;
+    position: absolute;
+    top: 0; left: 0;
+  }
+  .tl { width: 12px; height: 12px; border-radius: 50%; }
+  .tl-r { background: #ff5f57; }
+  .tl-y { background: #febc2e; }
+  .tl-g { background: #28c840; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 200px;
+    flex-shrink: 0;
+    background: rgba(0,0,0,0.035);
+    border-right: 1px solid rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 8px;
+  }
+  .sidebar-header {
+    height: 38px;
+    display: flex;
+    align-items: flex-end;
+    padding: 0 16px 6px;
+  }
+  .sidebar-nav { padding: 0 8px; flex: 1; }
+  .nav-section-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(0,0,0,0.35);
+    padding: 8px 8px 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: rgba(0,0,0,0.65);
+    cursor: pointer;
+    position: relative;
+  }
+  .nav-item.active {
+    background: rgba(0,0,0,0.07);
+    color: rgba(0,0,0,0.85);
+    font-weight: 500;
+  }
+  .nav-icon { width: 14px; height: 14px; opacity: 0.6; flex-shrink: 0; }
+  .nav-badge {
+    margin-left: auto;
+    background: rgba(0,0,0,0.1);
+    color: rgba(0,0,0,0.5);
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+  .nav-badge.cloud { background: rgba(59,130,246,0.15); color: #3b82f6; }
+  .nav-badge.online { background: rgba(168,85,247,0.15); color: #a855f7; }
+
+  .sidebar-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(0,0,0,0.3);
+    padding: 12px 16px 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .sidebar-actions { padding: 0 8px; }
+  .sidebar-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    color: rgba(0,0,0,0.5);
+    cursor: pointer;
+    text-align: left;
+  }
+  .sidebar-footer {
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sidebar-footer-btn {
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: rgba(0,0,0,0.4);
+  }
+  .sidebar-footer-btn.active { background: rgba(0,0,0,0.07); color: rgba(0,0,0,0.7); }
+
+  /* ── Main content ── */
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #f6f6f6;
+    overflow: hidden;
+  }
+
+  /* Toolbar */
+  .toolbar {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 10px;
+    background: rgba(255,255,255,0.24);
+    flex-shrink: 0;
+  }
+  .search-box {
+    flex: 1;
+    max-width: 300px;
+    height: 26px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    gap: 6px;
+    font-size: 12px;
+    color: rgba(0,0,0,0.35);
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+  .toolbar-actions { display: flex; gap: 6px; margin-left: auto; }
+  .toolbar-btn {
+    width: 26px; height: 26px;
+    border-radius: 5px;
+    border: none;
+    background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: rgba(0,0,0,0.45);
+    font-size: 11px;
+  }
+
+  /* List header */
+  .list-header {
+    display: flex;
+    align-items: center;
+    padding: 4px 30px 4px 8px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: rgba(0,0,0,0.35);
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    background: rgba(246,246,246,0.92);
+    backdrop-filter: blur(8px);
+    z-index: 10;
+    margin-bottom: 2px;
+  }
+
+  /* Track rows */
+  .track-list { flex: 1; overflow-y: auto; }
+  .track-row {
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    height: 46px;
+    border-radius: 6px;
+    margin: 0 4px;
+    cursor: pointer;
+    gap: 2px;
+  }
+  .track-row:hover { background: rgba(0,0,0,0.04); }
+  .track-row.is-active { background: rgba(59,130,246,0.08); }
+  .track-row.is-selected { background: rgba(59,130,246,0.12); }
+  .col-num {
+    width: 36px;
+    text-align: center;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: rgba(0,0,0,0.3);
+  }
+  .col-num.playing { color: #3b82f6; font-size: 10px; }
+  .col-info { flex: 1; min-width: 0; }
+  .col-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(0,0,0,0.8);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .col-title.active { color: #3b82f6; }
+  .col-subtitle {
+    font-size: 11px;
+    color: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 1px;
+  }
+  .col-duration {
+    width: 48px;
+    text-align: right;
+    font-size: 12px;
+    color: rgba(0,0,0,0.3);
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .cloud-icon { font-size: 9px; opacity: 0.5; }
+
+  /* Playback bar */
+  .playback-bar {
+    height: 80px;
+    flex-shrink: 0;
+    border-top: 1px solid rgba(0,0,0,0.04);
+    background: rgba(0,0,0,0.02);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 16px;
+  }
+  .pb-art {
+    width: 44px; height: 44px;
+    border-radius: 6px;
+    background: rgba(0,0,0,0.08);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    color: rgba(0,0,0,0.2);
+  }
+  .pb-info { min-width: 0; flex: 1; max-width: 160px; }
+  .pb-title { font-size: 13px; font-weight: 500; color: rgba(0,0,0,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pb-artist { font-size: 11px; color: rgba(0,0,0,0.4); margin-top: 1px; }
+  .pb-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .pb-buttons { display: flex; align-items: center; gap: 16px; }
+  .pb-btn {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(0,0,0,0.55);
+    font-size: 14px;
+  }
+  .pb-btn.play {
+    width: 32px; height: 32px;
+    background: #3b82f6;
+    color: #fff;
+    font-size: 14px;
+  }
+  .pb-progress {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    color: rgba(0,0,0,0.35);
+  }
+  .pb-bar {
+    flex: 1;
+    height: 3px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+  }
+  .pb-bar-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    background: #3b82f6;
+    border-radius: 2px;
+    width: 35%;
+  }
+  .pb-right { display: flex; align-items: center; gap: 8px; }
+  .pb-vol {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 11px; color: rgba(0,0,0,0.4);
+  }
+  .pb-vol-bar {
+    width: 60px; height: 3px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 2px;
+    position: relative;
+  }
+  .pb-vol-fill { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(0,0,0,0.3); border-radius: 2px; width: 70%; }
+
+  /* ── Grid of views ── */
+  .views-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 8px;
+  }
+  .view-card {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .view-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #666;
+    margin-bottom: 8px;
+    margin-top: 4px;
+  }
+
+  /* ── Cloud view ── */
+  .cloud-row {
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    height: 46px;
+    border-radius: 6px;
+    margin: 0 4px;
+    gap: 2px;
+  }
+  .cloud-del-btn {
+    width: 28px; height: 28px;
+    border-radius: 5px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: rgba(0,0,0,0.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  /* ── Online panel ── */
+  .online-panel {
+    background: #f6f6f6;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .platform-tabs {
+    display: flex;
+    padding: 8px 16px 0;
+    gap: 2px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    flex-shrink: 0;
+  }
+  .platform-tab {
+    padding: 6px 12px;
+    border-radius: 6px 6px 0 0;
+    font-size: 12px;
+    color: rgba(0,0,0,0.45);
+    cursor: pointer;
+    border: none;
+    background: transparent;
+  }
+  .platform-tab.active {
+    background: rgba(0,0,0,0.07);
+    color: rgba(0,0,0,0.8);
+    font-weight: 600;
+  }
+  .online-row {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+    gap: 10px;
+    height: 52px;
+    cursor: pointer;
+  }
+  .online-row:hover { background: rgba(0,0,0,0.03); }
+  .online-cover {
+    width: 36px; height: 36px;
+    border-radius: 4px;
+    background: rgba(0,0,0,0.08);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: rgba(0,0,0,0.15);
+  }
+  .online-info { flex: 1; min-width: 0; }
+  .online-title { font-size: 13px; font-weight: 500; color: rgba(0,0,0,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .online-artist { font-size: 11px; color: rgba(0,0,0,0.4); margin-top: 1px; }
+  .online-actions { display: flex; gap: 4px; align-items: center; }
+  .online-btn {
+    width: 26px; height: 26px;
+    border-radius: 5px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(0,0,0,0.3);
+    font-size: 12px;
+  }
+  .online-btn.fav { color: #f59e0b; }
+  .online-badge-play {
+    background: rgba(59,130,246,0.12);
+    color: #3b82f6;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  /* ── Settings view ── */
+  .settings-view {
+    background: #f6f6f6;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .settings-tabs {
+    display: flex;
+    padding: 0 16px;
+    gap: 4px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    flex-shrink: 0;
+    height: 40px;
+    align-items: flex-end;
+  }
+  .settings-tab {
+    padding: 6px 14px;
+    border-radius: 6px 6px 0 0;
+    font-size: 13px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: rgba(0,0,0,0.4);
+  }
+  .settings-tab.active {
+    background: rgba(0,0,0,0.07);
+    color: rgba(0,0,0,0.85);
+    font-weight: 600;
+  }
+  .settings-body { flex: 1; overflow-y: auto; padding: 16px; }
+  .sv-section { background: #fff; border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; }
+  .sv-section-title { font-size: 13px; font-weight: 600; color: rgba(0,0,0,0.7); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .sv-row {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    gap: 10px;
+    font-size: 13px;
+    color: rgba(0,0,0,0.7);
+  }
+  .sv-row:last-child { border-bottom: none; }
+  .sv-badge {
+    background: rgba(59,130,246,0.1);
+    color: #3b82f6;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-left: 4px;
+  }
+  .sv-del-btn {
+    margin-left: auto;
+    width: 26px; height: 26px;
+    border-radius: 5px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: rgba(0,0,0,0.25);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sv-primary-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: rgba(59,130,246,0.1);
+    color: #3b82f6;
+    border: none;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  /* ── Full player overlay ── */
+  .full-player {
+    position: absolute;
+    inset: 0;
+    background: rgba(245,245,245,0.96);
+    backdrop-filter: blur(20px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    gap: 24px;
+  }
+  .fp-close {
+    position: absolute;
+    top: 12px; right: 12px;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.08);
+    cursor: pointer;
+    font-size: 14px;
+    color: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .vinyl-container {
+    position: relative;
+    width: 180px; height: 180px;
+  }
+  .vinyl {
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50%, #2a2a2a 0%, #1a1a1a 60%, #111 100%);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .vinyl::after {
+    content: '';
+    position: absolute;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.08);
+    border: 2px solid rgba(255,255,255,0.1);
+  }
+  .vinyl-label {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: #3b82f6;
+    z-index: 1;
+    font-size: 8px;
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .tonearm {
+    position: absolute;
+    top: -10px; right: -24px;
+    width: 3px; height: 100px;
+    background: rgba(0,0,0,0.3);
+    transform-origin: top center;
+    transform: rotate(15deg);
+    border-radius: 0 0 2px 2px;
+  }
+  .fp-info { text-align: center; }
+  .fp-title { font-size: 18px; font-weight: 700; color: rgba(0,0,0,0.85); margin-bottom: 4px; }
+  .fp-artist { font-size: 13px; color: rgba(0,0,0,0.45); }
+  .fp-progress {
+    width: 320px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    color: rgba(0,0,0,0.35);
+  }
+  .fp-bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 2px;
+    position: relative;
+  }
+  .fp-bar-fill { position: absolute; left: 0; top: 0; bottom: 0; background: #3b82f6; border-radius: 2px; width: 35%; }
+  .fp-controls { display: flex; align-items: center; gap: 20px; }
+  .fp-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: rgba(0,0,0,0.5);
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .fp-btn.play {
+    width: 44px; height: 44px;
+    background: #3b82f6;
+    color: #fff;
+    font-size: 18px;
+  }
+
+  /* ── Lyrics panel ── */
+  .lyrics-panel {
+    width: 260px;
+    background: rgba(246,246,246,0.95);
+    border-left: 1px solid rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    padding: 12px 0;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .lp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px 10px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    margin-bottom: 8px;
+  }
+  .lp-title { font-size: 13px; font-weight: 600; color: rgba(0,0,0,0.7); }
+  .lp-line {
+    padding: 6px 16px;
+    font-size: 13px;
+    color: rgba(0,0,0,0.3);
+    line-height: 1.6;
+    text-align: center;
+    transition: color 0.2s;
+  }
+  .lp-line.active { color: rgba(0,0,0,0.85); font-weight: 600; font-size: 14px; }
+  .lp-line.near { color: rgba(0,0,0,0.55); }
+
+  /* ── Context menu ── */
+  .ctx-menu {
+    background: rgba(250,250,250,0.95);
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    padding: 4px;
+    min-width: 160px;
+    backdrop-filter: blur(20px);
+  }
+  .ctx-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    border-radius: 7px;
+    font-size: 13px;
+    color: rgba(0,0,0,0.75);
+    cursor: pointer;
+  }
+  .ctx-item:hover { background: #3b82f6; color: #fff; }
+  .ctx-sep { height: 1px; background: rgba(0,0,0,0.06); margin: 3px 4px; }
+  .ctx-item.danger { color: #ef4444; }
+  .ctx-item.danger:hover { background: #ef4444; color: #fff; }
+
+  /* ── Error/info bars ── */
+  .info-bar {
+    background: rgba(59,130,246,0.1);
+    border-bottom: 1px solid rgba(59,130,246,0.2);
+    padding: 6px 16px;
+    font-size: 12px;
+    color: #3b82f6;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .error-bar {
+    background: rgba(239,68,68,0.08);
+    border-bottom: 1px solid rgba(239,68,68,0.15);
+    padding: 6px 16px;
+    font-size: 12px;
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .bar-close { margin-left: auto; cursor: pointer; opacity: 0.6; }
+
+  /* ── Splash screen ── */
+  .splash {
+    position: absolute;
+    inset: 0;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 30;
+    border-radius: 12px;
+  }
+  .splash-content { text-align: center; }
+  .splash-logo { font-size: 40px; margin-bottom: 12px; }
+  .splash-title { font-size: 16px; font-weight: 700; color: rgba(0,0,0,0.7); margin-bottom: 6px; }
+  .splash-spinner {
+    width: 20px; height: 20px;
+    border: 2px solid rgba(0,0,0,0.1);
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 8px auto 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Annotation layer ── */
+  .annotated { position: relative; }
+  .ann {
+    position: absolute;
+    background: rgba(255,200,0,0.9);
+    color: #000;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 4px;
+    border-radius: 3px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 100;
+  }
+  .ann-line {
+    position: absolute;
+    background: rgba(255,200,0,0.7);
+    height: 1px;
+    pointer-events: none;
+    z-index: 99;
+  }
+
+  /* ── Legend ── */
+  .legend {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 32px;
+    padding: 20px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .legend-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .legend-num {
+    width: 20px; height: 20px;
+    border-radius: 4px;
+    background: rgba(255,200,0,0.9);
+    color: #000;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .legend-text { font-size: 12px; color: #aaa; line-height: 1.5; }
+  .legend-title { font-weight: 600; color: #ddd; display: block; margin-bottom: 2px; }
+
+  .eq-bars { display: flex; align-items: flex-end; gap: 2px; height: 14px; }
+  .eq-bars span { width: 2px; background: #3b82f6; border-radius: 1px; animation: eq 0.6s ease-in-out infinite alternate; }
+  .eq-bars span:nth-child(1) { height: 6px; animation-delay: 0s; }
+  .eq-bars span:nth-child(2) { height: 12px; animation-delay: 0.2s; }
+  .eq-bars span:nth-child(3) { height: 8px; animation-delay: 0.1s; }
+  @keyframes eq {
+    from { transform: scaleY(0.4); }
+    to { transform: scaleY(1); }
+  }
+
+  hr.divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 32px 0; }
+</style>
+</head>
+<body>
+
+<div class="page-title">Cadence — UI Wireframe</div>
+<div class="page-subtitle">逆向工程 · 当前代码 → 视觉规格文档 · 仅供设计参考</div>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!-- VIEW 1: Main Library View (with playback, active track) -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="section-label">① 主视图 — 资料库（本地音乐列表 + 播放中）</div>
+<div class="app-shell annotated" style="height: 520px;">
+  <div class="traffic-lights">
+    <div class="tl tl-r"></div>
+    <div class="tl tl-y"></div>
+    <div class="tl tl-g"></div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header"></div>
+    <div class="sidebar-nav">
+      <div class="nav-section-title">资料库</div>
+      <div class="nav-item active">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <span>全部音乐</span>
+        <span class="nav-badge">72</span>
+      </div>
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+        <span>云端音乐</span>
+        <span class="nav-badge cloud">8</span>
+      </div>
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>
+        <span>在线目录</span>
+        <span class="nav-badge online">3</span>
+      </div>
+    </div>
+    <div class="sidebar-section-label">管理</div>
+    <div class="sidebar-actions">
+      <button class="sidebar-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+        <span>添加文件夹</span>
+      </button>
+    </div>
+    <div class="sidebar-footer">
+      <button class="sidebar-footer-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0"/><path d="M4.93 19.07a10 10 0 0 0 14.14 0"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="main-content">
+    <div class="toolbar">
+      <div class="search-box">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <span>搜索…</span>
+      </div>
+      <div class="toolbar-actions">
+        <button class="toolbar-btn">☐</button>
+      </div>
+    </div>
+
+    <!-- Track list -->
+    <div class="track-list">
+      <div class="list-header">
+        <div class="col-num">#</div>
+        <div class="col-info">标题</div>
+        <div class="col-duration">时长</div>
+      </div>
+
+      <!-- Active + playing row -->
+      <div class="track-row is-active">
+        <div class="col-num playing">
+          <div class="eq-bars"><span></span><span></span><span></span></div>
+        </div>
+        <div class="col-info">
+          <div class="col-title active">弯弯的月亮</div>
+          <div class="col-subtitle">吕方</div>
+        </div>
+        <div class="col-duration">4:24</div>
+      </div>
+
+      <!-- Selected row -->
+      <div class="track-row is-selected">
+        <div class="col-num"><span style="color:#3b82f6;font-size:10px">▶</span></div>
+        <div class="col-info">
+          <div class="col-title">《千里之外》依然A妹</div>
+          <div class="col-subtitle">依然A妹</div>
+        </div>
+        <div class="col-duration">4:11</div>
+      </div>
+
+      <!-- Cloud track -->
+      <div class="track-row">
+        <div class="col-num"><span style="font-size:11px;color:rgba(0,0,0,0.3)">3</span></div>
+        <div class="col-info">
+          <div class="col-title">《心雨》依然A妹</div>
+          <div class="col-subtitle">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.5"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+            依然A妹
+          </div>
+        </div>
+        <div class="col-duration">3:52</div>
+      </div>
+      <div class="track-row">
+        <div class="col-num"><span style="font-size:11px;color:rgba(0,0,0,0.3)">4</span></div>
+        <div class="col-info">
+          <div class="col-title">假如这两位天后合唱《借口》</div>
+          <div class="col-subtitle">周杰伦</div>
+        </div>
+        <div class="col-duration">3:38</div>
+      </div>
+      <div class="track-row">
+        <div class="col-num"><span style="font-size:11px;color:rgba(0,0,0,0.3)">5</span></div>
+        <div class="col-info">
+          <div class="col-title">一把武器摆28万8 老王觉得老板对武器有误解</div>
+          <div class="col-subtitle">Local File</div>
+        </div>
+        <div class="col-duration">2:51</div>
+      </div>
+      <div class="track-row">
+        <div class="col-num"><span style="font-size:11px;color:rgba(0,0,0,0.3)">6</span></div>
+        <div class="col-info">
+          <div class="col-title">Night Drive</div>
+          <div class="col-subtitle">Albums</div>
+        </div>
+        <div class="col-duration">5:20</div>
+      </div>
+    </div>
+
+    <!-- Playback bar -->
+    <div class="playback-bar">
+      <div class="pb-art">♪</div>
+      <div class="pb-info">
+        <div class="pb-title">弯弯的月亮</div>
+        <div class="pb-artist">吕方</div>
+      </div>
+      <div class="pb-controls">
+        <div class="pb-buttons">
+          <button class="pb-btn">⏮</button>
+          <button class="pb-btn play">⏸</button>
+          <button class="pb-btn">⏭</button>
+        </div>
+        <div class="pb-progress">
+          <span>2:52</span>
+          <div class="pb-bar"><div class="pb-bar-fill"></div></div>
+          <span>4:24</span>
+        </div>
+      </div>
+      <div class="pb-right">
+        <div class="pb-vol">
+          🔊
+          <div class="pb-vol-bar"><div class="pb-vol-fill"></div></div>
+        </div>
+        <button class="pb-btn" title="歌词" style="font-size:11px;color:rgba(0,0,0,0.4)">歌词</button>
+        <button class="pb-btn" title="全屏" style="font-size:11px;color:rgba(0,0,0,0.4)">⛶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Annotations -->
+  <div class="ann" style="top:44px;left:2px">Sidebar 200px</div>
+  <div class="ann" style="top:82px;left:56px">nav-item active</div>
+  <div class="ann" style="top:166px;left:56px">cloud-badge</div>
+  <div class="ann" style="top:350px;left:56px">sidebar-btn</div>
+  <div class="ann" style="top:444px;left:30px">settings btn</div>
+  <div class="ann" style="top:44px;left:240px">toolbar h=44</div>
+  <div class="ann" style="top:90px;left:240px">list-header sticky</div>
+  <div class="ann" style="top:140px;left:400px">is-active + eq-bars</div>
+  <div class="ann" style="top:186px;left:400px">is-selected</div>
+  <div class="ann" style="top:440px;left:240px">playback-bar h=80</div>
+</div>
+
+<hr class="divider" />
+
+<!-- ════════════════════════════════════════════════════ -->
+<!-- VIEWS GRID: Cloud / Online / Settings / Full Player -->
+<!-- ════════════════════════════════════════════════════ -->
+<div class="section-label">② 子视图</div>
+<div class="views-grid">
+
+  <!-- Cloud view -->
+  <div>
+    <div class="view-label">云端音乐视图</div>
+    <div class="view-card">
+      <div class="app-shell" style="height: 380px;">
+        <div class="sidebar">
+          <div class="sidebar-header"></div>
+          <div class="sidebar-nav">
+            <div class="nav-section-title">资料库</div>
+            <div class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span>全部音乐</span><span class="nav-badge">72</span></div>
+            <div class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg><span>云端音乐</span><span class="nav-badge cloud">8</span></div>
+          </div>
+          <div class="sidebar-footer"><button class="sidebar-footer-btn">⚙</button></div>
+        </div>
+        <div class="main-content">
+          <div class="toolbar">
+            <div class="search-box"><span style="opacity:0.4">搜索…</span></div>
+          </div>
+          <div class="track-list">
+            <div class="list-header">
+              <div class="col-num">#</div>
+              <div class="col-info">标题</div>
+              <div style="width:32px"></div>
+            </div>
+            <!-- Cloud rows with play button hover state -->
+            <div class="cloud-row is-active" style="background:rgba(59,130,246,0.08);">
+              <div class="col-num playing"><div class="eq-bars"><span></span><span></span><span></span></div></div>
+              <div class="col-info">
+                <div class="col-title active">弯弯的月亮</div>
+                <div class="col-subtitle"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg> Cloud Storage</div>
+              </div>
+              <button class="cloud-del-btn">🗑</button>
+            </div>
+            <div class="cloud-row" style="background:rgba(0,0,0,0.04);">
+              <div class="col-num" style="display:flex;align-items:center;justify-content:center;"><button style="background:#3b82f6;border:none;border-radius:50%;width:22px;height:22px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;">▶</button></div>
+              <div class="col-info">
+                <div class="col-title">《千里之外》依然A妹</div>
+                <div class="col-subtitle"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg> Cloud Storage</div>
+              </div>
+              <button class="cloud-del-btn">🗑</button>
+            </div>
+            <div class="cloud-row">
+              <div class="col-num"><span style="font-size:11px;color:rgba(0,0,0,0.3)">3</span></div>
+              <div class="col-info">
+                <div class="col-title">《心雨》依然A妹</div>
+                <div class="col-subtitle"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg> Cloud Storage</div>
+              </div>
+              <button class="cloud-del-btn">🗑</button>
+            </div>
+          </div>
+          <div class="playback-bar" style="height:60px;">
+            <div class="pb-art" style="width:32px;height:32px;font-size:14px;">♪</div>
+            <div class="pb-info"><div class="pb-title" style="font-size:12px;">弯弯的月亮</div></div>
+            <div class="pb-controls" style="gap:4px;">
+              <div class="pb-buttons" style="gap:10px;"><button class="pb-btn" style="font-size:12px;">⏮</button><button class="pb-btn play" style="width:26px;height:26px;font-size:12px;">⏸</button><button class="pb-btn" style="font-size:12px;">⏭</button></div>
+              <div class="pb-progress" style="font-size:10px;"><span>2:52</span><div class="pb-bar"><div class="pb-bar-fill"></div></div><span>4:24</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:#777;margin-top:6px;">
+      ↑ Hover row 2 shows ▶ play button in col-num · Active row shows eq-bars · Delete button on right
+    </div>
+  </div>
+
+  <!-- Online panel -->
+  <div>
+    <div class="view-label">在线目录视图</div>
+    <div class="view-card">
+      <div class="app-shell" style="height: 380px;">
+        <div class="sidebar">
+          <div class="sidebar-header"></div>
+          <div class="sidebar-nav">
+            <div class="nav-section-title">资料库</div>
+            <div class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span>全部音乐</span></div>
+            <div class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg><span>云端音乐</span></div>
+            <div class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49"/></svg><span>在线目录</span><span class="nav-badge online">3</span></div>
+          </div>
+          <div class="sidebar-footer"><button class="sidebar-footer-btn">⚙</button></div>
+        </div>
+        <div class="online-panel">
+          <div class="toolbar">
+            <div class="search-box"><span style="color:rgba(0,0,0,0.5);font-size:12px;">弯弯的月亮</span></div>
+          </div>
+          <div class="platform-tabs">
+            <button class="platform-tab">网易</button>
+            <button class="platform-tab active">酷我</button>
+            <button class="platform-tab">酷狗</button>
+            <button class="platform-tab">QQ</button>
+          </div>
+          <div style="flex:1;overflow-y:auto;">
+            <div class="online-row" style="background:rgba(59,130,246,0.06);">
+              <div class="online-cover">♪</div>
+              <div class="online-info">
+                <div class="online-title" style="color:#3b82f6;">弯弯的月亮</div>
+                <div class="online-artist">吕方 · 1990 · 4:24</div>
+              </div>
+              <div class="online-actions">
+                <span class="online-badge-play">播放中</span>
+                <button class="online-btn fav">♥</button>
+                <button class="online-btn">⬇</button>
+              </div>
+            </div>
+            <div class="online-row">
+              <div class="online-cover">♪</div>
+              <div class="online-info">
+                <div class="online-title">弯弯的月亮 (翻唱版)</div>
+                <div class="online-artist">李健 · 3:58</div>
+              </div>
+              <div class="online-actions">
+                <button class="online-btn">♡</button>
+                <button class="online-btn">⬇</button>
+              </div>
+            </div>
+            <div class="online-row">
+              <div class="online-cover">♪</div>
+              <div class="online-info">
+                <div class="online-title">弯弯的月亮</div>
+                <div class="online-artist">庾澄庆 · 4:02</div>
+              </div>
+              <div class="online-actions">
+                <button class="online-btn fav">♥</button>
+                <button class="online-btn">⬇</button>
+              </div>
+            </div>
+          </div>
+          <div class="playback-bar" style="height:60px;">
+            <div class="pb-art" style="width:32px;height:32px;font-size:14px;">♪</div>
+            <div class="pb-info"><div class="pb-title" style="font-size:12px;">弯弯的月亮</div><div class="pb-artist" style="font-size:10px;">吕方</div></div>
+            <div class="pb-controls" style="gap:4px;">
+              <div class="pb-buttons" style="gap:10px;"><button class="pb-btn" style="font-size:12px;">⏮</button><button class="pb-btn play" style="width:26px;height:26px;font-size:12px;">⏸</button><button class="pb-btn" style="font-size:12px;">⏭</button></div>
+              <div class="pb-progress" style="font-size:10px;"><span>2:52</span><div class="pb-bar"><div class="pb-bar-fill"></div></div><span>4:24</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings view -->
+  <div>
+    <div class="view-label">设置视图（4 标签页）</div>
+    <div class="view-card">
+      <div class="app-shell" style="height: 380px;">
+        <div class="sidebar">
+          <div class="sidebar-header"></div>
+          <div class="sidebar-nav">
+            <div class="nav-section-title">资料库</div>
+            <div class="nav-item"><span>全部音乐</span></div>
+            <div class="nav-item"><span>云端音乐</span></div>
+          </div>
+          <div class="sidebar-footer"><button class="sidebar-footer-btn active">⚙</button></div>
+        </div>
+        <div class="settings-view">
+          <div class="toolbar"><div style="width:200px;height:26px;background:rgba(0,0,0,0.05);border-radius:6px;"></div></div>
+          <div class="settings-tabs">
+            <button class="settings-tab">通用</button>
+            <button class="settings-tab active">云端存储</button>
+            <button class="settings-tab">在线音乐</button>
+            <button class="settings-tab">诊断</button>
+          </div>
+          <div class="settings-body">
+            <div class="sv-section">
+              <div class="sv-section-title">
+                ☁ 云端音乐 <span class="sv-badge">8</span>
+                <button style="margin-left:auto;border:none;background:rgba(59,130,246,0.1);color:#3b82f6;border-radius:5px;padding:3px 8px;font-size:11px;cursor:pointer;">刷新</button>
+              </div>
+              <div class="sv-row">弯弯的月亮<button class="sv-del-btn">🗑</button></div>
+              <div class="sv-row">《千里之外》依然A妹<button class="sv-del-btn">🗑</button></div>
+              <div class="sv-row">《心雨》依然A妹<button class="sv-del-btn">🗑</button></div>
+              <div class="sv-row" style="color:rgba(0,0,0,0.3);font-size:12px;">…及 5 首更多</div>
+            </div>
+            <div class="sv-section">
+              <div class="sv-section-title">上传历史</div>
+              <div class="sv-row">
+                <span style="font-size:11px;color:rgba(0,0,0,0.4);">14:32:01</span>
+                <span style="font-size:11px;background:rgba(34,197,94,0.1);color:#22c55e;padding:1px 6px;border-radius:4px;">✓ 3 首</span>
+                <span style="font-size:11px;background:rgba(234,179,8,0.1);color:#eab308;padding:1px 6px;border-radius:4px;">跳过 1</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full player -->
+  <div>
+    <div class="view-label">全屏播放器（黑胶动画 + 歌词）</div>
+    <div class="view-card">
+      <div class="app-shell" style="height: 380px; position: relative;">
+        <div class="sidebar" style="opacity:0.3;">
+          <div class="sidebar-header"></div>
+        </div>
+        <div class="main-content" style="opacity:0.3;"></div>
+        <!-- Full player overlay -->
+        <div class="full-player" style="border-radius:12px;">
+          <button class="fp-close">✕</button>
+          <div class="vinyl-container">
+            <div class="vinyl">
+              <div class="vinyl-label">C</div>
+            </div>
+            <div class="tonearm"></div>
+          </div>
+          <div class="fp-info">
+            <div class="fp-title">弯弯的月亮</div>
+            <div class="fp-artist">吕方</div>
+          </div>
+          <div class="fp-progress">
+            <span>2:52</span>
+            <div class="fp-bar"><div class="fp-bar-fill"></div></div>
+            <span>4:24</span>
+          </div>
+          <div class="fp-controls">
+            <button class="fp-btn">⏮</button>
+            <button class="fp-btn play">⏸</button>
+            <button class="fp-btn">⏭</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:#777;margin-top:6px;">
+      ↑ 全局 overlay，黑胶旋转动画（CSS animation rotate）。侧边歌词面板另见下方。
+    </div>
+  </div>
+
+</div>
+
+<hr class="divider" />
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- Lyrics panel + Context menu side by side        -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="section-label">③ 歌词面板 + 右键菜单</div>
+<div style="display:flex;gap:32px;align-items:flex-start;">
+
+  <!-- Lyrics panel -->
+  <div>
+    <div class="view-label">歌词面板（侧边 260px）</div>
+    <div style="width:260px;border-radius:10px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.06);">
+      <div class="lyrics-panel" style="height:320px;">
+        <div class="lp-header">
+          <div class="lp-title">歌词</div>
+          <div style="display:flex;gap:6px;font-size:11px;color:rgba(0,0,0,0.4);">
+            <span>繁→简</span>
+            <span>+0s</span>
+            <span>✕</span>
+          </div>
+        </div>
+        <div style="overflow-y:auto;flex:1;">
+          <div class="lp-line">弯弯的月亮小小的船</div>
+          <div class="lp-line near">小小的船儿两头尖</div>
+          <div class="lp-line active">我在小小的船里坐</div>
+          <div class="lp-line near">只看见闪闪的星星</div>
+          <div class="lp-line">蓝蓝的天</div>
+          <div class="lp-line" style="margin-top:8px;">弯弯的月亮小小的船</div>
+          <div class="lp-line">小小的船儿两头尖</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Context menu -->
+  <div>
+    <div class="view-label">右键菜单（单选本地文件）</div>
+    <div class="ctx-menu">
+      <div class="ctx-item">▶ 播放</div>
+      <div class="ctx-sep"></div>
+      <div class="ctx-item">📁 在 Finder 中显示</div>
+      <div class="ctx-item">☁ 上传到云端</div>
+      <div class="ctx-sep"></div>
+      <div class="ctx-item danger">🗑 删除</div>
+    </div>
+    <div style="margin-top:16px;font-size:11px;color:#777;">
+      · 仅 1 条选中时「播放」可用<br>
+      · 云端文件隐藏「Finder 显示」和「上传」<br>
+      · 右键时自动选中该行
+    </div>
+
+    <!-- Info/Error bars -->
+    <div class="view-label" style="margin-top:24px;">Info / Error 消息条（6s 自动消失）</div>
+    <div style="width:360px;border-radius:8px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.3);">
+      <div class="info-bar">已上传 3 首，跳过 1 首（已存在）<span class="bar-close">✕</span></div>
+      <div class="error-bar">云端链接刷新失败：Network timeout<span class="bar-close">✕</span></div>
+    </div>
+  </div>
+
+  <!-- Splash screen preview -->
+  <div>
+    <div class="view-label">启动加载屏</div>
+    <div style="width:240px;height:160px;border-radius:10px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.5);position:relative;border:1px solid rgba(255,255,255,0.06);">
+      <div class="splash" style="border-radius:10px;">
+        <div class="splash-content">
+          <div class="splash-logo">🎵</div>
+          <div class="splash-title">律动</div>
+          <div class="splash-spinner"></div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:#777;margin-top:6px;">
+      isInitializing=true 时全屏遮罩<br>scan_paths 完成后淡出
+    </div>
+  </div>
+
+</div>
+
+<hr class="divider" />
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- Component & Interaction notes                   -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="section-label">④ 交互规则 & 组件说明</div>
+<div class="legend">
+  <div class="legend-item">
+    <div class="legend-num">A</div>
+    <div class="legend-text">
+      <span class="legend-title">侧边栏宽度固定 200px</span>
+      macOS traffic lights 区域高度 38px，避让窗口控件
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-num">B</div>
+    <div class="legend-text">
+      <span class="legend-title">list-header sticky + blur</span>
+      position:sticky top:0，backdrop-filter:blur(8px)，z-index:10
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-num">C</div>
+    <div class="legend-text">
+      <span class="legend-title">track-row hover 三态</span>
+      默认→序号，hover→▶按钮，播放中→eq-bars动画，暂停→⏸
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-num">D</div>
+    <div class="legend-text">
+      <span class="legend-title">键盘快捷键</span>
+      Space=暂停/播放 · Enter=播放选中 · Del=删除 · ⌘A=全选 · ↑↓=导航
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-num">E</div>
+    <div class="legend-text">
+      <span class="legend-title">playback-bar 高度 80px</span>
+      main-content 末尾 flex 子元素，不是 app-container 子元素
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-num">F</div>
+    <div class="legend-text">
+      <span class="legend-title">云端 CORS 策略</span>
+      PUT/DELETE 从 Rust 端执行（reqwest）绕过 WebView CORS 限制
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-num">G</div>
+    <div class="legend-text">
+      <span class="legend-title">在线音乐搜索防抖 220ms</span>
+      搜索框 debounce，平台切换立即清空结果
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-num">H</div>
+    <div class="legend-text">
+      <span class="legend-title">错误/信息消息</span>
+      info-bar 4s 自动消失，error-bar 6s 自动消失，可手动关闭
+    </div>
+  </div>
+  <div class="legend-item">
+    <div class="legend-num">I</div>
+    <div class="legend-text">
+      <span class="legend-title">全屏播放器</span>
+      z-index:20 overlay，黑胶旋转 CSS animation，点击歌词区域跳转
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:24px;font-size:11px;color:#555;text-align:center;">
+  Cadence UI Wireframe · 逆向自 frontend/src/App.tsx + App.css + components/ · 
+  <a href="https://github.com/jjhuang01/cadence" style="color:#3b82f6;">github.com/jjhuang01/cadence</a>
+</div>
+
+</body>
+</html>
