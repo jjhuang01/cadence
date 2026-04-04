@@ -12,3 +12,4 @@ frontend/dist/
 .tmp/
 .claude/worktrees/
 **/.env
+*.tsbuildinfo
