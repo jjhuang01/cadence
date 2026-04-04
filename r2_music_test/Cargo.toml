@@ -1,0 +1,20 @@
+[package]
+name = "r2_music_test"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "r2_music_test"
+path = "src/main.rs"
+
+[[bin]]
+name = "upload_real_mp3"
+path = "upload_real_mp3.rs"
+
+[dependencies]
+aws-sdk-s3 = "1.68.0"
+aws-config = "1.5.11"
+tokio = { version = "1.42", features = ["full"] }
+rodio = "0.19"
+anyhow = "1.0"
+dotenvy = "0.15"

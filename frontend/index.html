@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>律动</title>
+    <style>
+      #pre-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: rgba(246, 246, 246, 0.98);
+        backdrop-filter: blur(40px) saturate(1.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 14px;
+      }
+      @media (prefers-color-scheme: dark) {
+        #pre-splash {
+          background: rgba(22, 22, 26, 0.98);
+        }
+      }
+      .ps-icon {
+        font-size: 48px;
+        opacity: 0.7;
+      }
+      .ps-name {
+        font-family: -apple-system, sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        color: #1d1d1f;
+        letter-spacing: -0.5px;
+      }
+      @media (prefers-color-scheme: dark) {
+        .ps-name {
+          color: #f5f5f7;
+        }
+      }
+    </style>
+  </head>
+  <body style="margin: 0; overflow: hidden">
+    <div id="pre-splash">
+      <div class="ps-icon">🎵</div>
+      <div class="ps-name">律动</div>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

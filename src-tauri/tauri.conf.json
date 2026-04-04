@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "律动",
+  "version": "0.1.0",
+  "identifier": "dev.tips.app",
+  "build": {
+    "frontendDist": "../frontend/dist",
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "cd frontend && pnpm dev",
+    "beforeBuildCommand": "cd frontend && pnpm build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "律动",
+        "width": 960,
+        "height": 660,
+        "minWidth": 720,
+        "minHeight": 520,
+        "resizable": true,
+        "center": true,
+        "decorations": true,
+        "transparent": false,
+        "visible": false
+      }
+    ],
+    "macOSPrivateApi": false,
+    "security": {
+      "csp": "default-src 'self'; script-src 'self' 'unsafe-eval'; connect-src 'self' https://lrclib.net https://*.cloudflarestorage.com; img-src 'self' data:; style-src 'self' 'unsafe-inline'; media-src 'self' stream: https://*.cloudflarestorage.com blob:"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "category": "Music",
+    "resources": [".env"],
+    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"]
+  }
+}

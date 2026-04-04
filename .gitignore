@@ -1,0 +1,14 @@
+/target
+.DS_Store
+*.log
+.windsurfrules
+/evidence
+node_modules/
+/package.json
+/pnpm-lock.yaml
+fix.py
+frontend/node_modules/
+frontend/dist/
+.tmp/
+.claude/worktrees/
+**/.env

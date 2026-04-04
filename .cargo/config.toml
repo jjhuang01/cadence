@@ -1,0 +1,18 @@
+[target.aarch64-apple-darwin]
+# 跳过 dsymutil 生成 .dSYM bundle，dev build 快约 30-50%
+rustflags = ["-C", "split-debuginfo=unpacked", "-C", "link-arg=-Wl,-ld_classic"]
+
+# 统一 MACOSX_DEPLOYMENT_TARGET，防止 rust-analyzer 和 tauri dev 缓存失效
+[env]
+MACOSX_DEPLOYMENT_TARGET = "10.13"
+
+[profile.dev]
+# 高并行度 + 最少优化（更快编译）
+codegen-units = 256
+opt-level = 0
+debug = 1
+overflow-checks = false
+
+[build]
+# 并行编译任务数（默认 CPU 核心数）
+jobs = 8
