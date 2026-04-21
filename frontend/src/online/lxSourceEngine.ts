@@ -138,6 +138,7 @@ export class LxSourceEngine {
     }
 
     let inited: unknown;
+    let initError: Error | null = null;
     try {
       inited = await Promise.race([
         initedPromise,
@@ -145,6 +146,8 @@ export class LxSourceEngine {
           setTimeout(() => reject(new Error('音源初始化超时（15秒）')), 15000),
         ),
       ]);
+    } catch (e) {
+      initError = e instanceof Error ? e : new Error(String(e));
     } finally {
       // Restore globalThis.lx after init completes or fails
       if (savedLx === undefined) delete g.lx;
@@ -152,6 +155,18 @@ export class LxSourceEngine {
     }
 
     this.requestHandler = capturedHandler;
+
+    if (!this.requestHandler) {
+      throw new Error('音源未注册 request handler');
+    }
+
+    if (initError) {
+      void writeRuntimeLog(
+        'warn',
+        `LxSourceEngine using request handler without inited metadata: ${initError.message}`,
+      );
+      return;
+    }
 
     const initedData = inited as { sources?: Record<string, unknown> } | null;
     if (initedData?.sources) {

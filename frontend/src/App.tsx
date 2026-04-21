@@ -152,6 +152,16 @@ export default function App() {
   const listRef = useRef<HTMLDivElement>(null);
   const activeSearch = activeView === 'online' ? onlineSearch : librarySearch;
 
+  function getOrderedSourceIds() {
+    const configuredIds = sourceConfig.loadedSources.map((source) => source.id);
+    const activeId = sourceConfig.activeSourceId;
+
+    return [
+      ...(activeId && configuredIds.includes(activeId) ? [activeId] : []),
+      ...configuredIds.filter((id) => id !== activeId),
+    ];
+  }
+
   const filteredTracks = useMemo(() => {
     const q = librarySearch.toLowerCase().trim();
     return tracks
@@ -290,14 +300,16 @@ export default function App() {
       setSourceConfig(config);
       if (config.loadedSources.length > 0) {
         for (const meta of config.loadedSources) {
-          if (loadedEnginesRef.current.has(meta.id)) continue;
+          if (engineLoadPromisesRef.current.has(meta.id)) continue;
           const engine = new LxSourceEngine();
-          try {
-            await engine.load(meta.scriptContent);
-            loadedEnginesRef.current.set(meta.id, engine);
-          } catch (e) {
-            console.error('Failed to init source engine', meta.name, e);
-          }
+          const loadPromise = engine.load(meta.scriptContent)
+            .then(() => {
+              loadedEnginesRef.current.set(meta.id, engine);
+            })
+            .catch((e) => {
+              console.error('Failed to init source engine', meta.name, e);
+            });
+          engineLoadPromisesRef.current.set(meta.id, loadPromise);
         }
       }
     }).catch(() => {});
@@ -602,12 +614,11 @@ export default function App() {
       `[previewFallback] detected NetEase 30s preview: "${track.title}" (expected ${track.duration_secs ?? '?'}s) — trying Kuwo`,
     );
 
-    const allEngineIds = Array.from(loadedEnginesRef.current.keys());
-    const activeId = sourceConfig.activeSourceId;
-    const engineOrder = [
-      ...(activeId && loadedEnginesRef.current.has(activeId) ? [activeId] : []),
-      ...allEngineIds.filter((id) => id !== activeId),
-    ];
+    const engineOrder = getOrderedSourceIds();
+
+    await Promise.allSettled(
+      engineOrder.map((id) => engineLoadPromisesRef.current.get(id) ?? Promise.resolve()),
+    );
 
     try {
       const q = `${track.title} ${track.subtitle ?? ''}`.trim();
@@ -673,14 +684,7 @@ export default function App() {
     if (!track.online_stream_url && track.online_id && track.online_source_id) {
       setIsResolvingUrl(true);
       try {
-        const activeId = sourceConfig.activeSourceId;
-
-        // Build ordered engine list: active first, then others
-        const allEngineIds = Array.from(loadedEnginesRef.current.keys());
-        const engineOrder = [
-          ...(activeId && loadedEnginesRef.current.has(activeId) ? [activeId] : []),
-          ...allEngineIds.filter((id) => id !== activeId),
-        ];
+        const engineOrder = getOrderedSourceIds();
 
         // Wait for all pending engine loads upfront
         await Promise.allSettled(
@@ -766,7 +770,14 @@ export default function App() {
         }
 
         if (!url) {
-          throw lastErr ?? new Error('未导入音源，无法获取播放链接。请在设置中导入 .js 音源文件。');
+          const hasConfiguredSources = sourceConfig.loadedSources.length > 0;
+          const hasLoadedEngine = engineOrder.some((id) => loadedEnginesRef.current.get(id)?.isLoaded());
+
+          throw lastErr ?? new Error(
+            hasConfiguredSources && !hasLoadedEngine
+              ? '音源正在初始化或加载失败，请稍后重试；若持续失败，请在设置中重新导入 .js 音源文件。'
+              : '未导入可用音源，无法获取播放链接。请在设置中导入 .js 音源文件。',
+          );
         }
 
         resolvedTrack = { ...track, online_stream_url: url };
