@@ -574,9 +574,15 @@ pub fn run() {
                     ),
                 };
 
-                // Cap per-request allocation to 2 MB; browser will issue follow-up Range requests.
+                // A 200 response must contain the full representation. Only cap explicit
+                // range responses, otherwise the media element can treat the truncated body
+                // as EOF and start stuttering mid-playback.
                 const MAX_CHUNK: u64 = 2 * 1024 * 1024;
-                let capped_end = end.min(start + MAX_CHUNK - 1);
+                let capped_end = if status == 206 {
+                    end.min(start + MAX_CHUNK - 1)
+                } else {
+                    end
+                };
                 let chunk_len = (capped_end - start + 1) as usize;
                 let mut buf = vec![0u8; chunk_len];
                 if let Err(error) = file.seek(SeekFrom::Start(start)) {
@@ -636,6 +642,99 @@ pub fn run() {
                 match builder.body(buf) {
                     Ok(resp) => responder.respond(resp),
                     Err(e) => error!("stream failed to build response path={} error={e}", file_path.display()),
+                }
+            }));
+        })
+        .register_asynchronous_uri_scheme_protocol("online", |_ctx, request, responder| {
+            // online://proxy/<percent-encoded-remote-url>
+            let uri = request.uri().to_string();
+            let encoded_url = uri
+                .strip_prefix("online://proxy/")
+                .unwrap_or("")
+                .to_string();
+            let target_url = urldecode(&encoded_url);
+            let range_header = request
+                .headers()
+                .get("Range")
+                .and_then(|v| v.to_str().ok())
+                .map(|s| s.to_string());
+
+            std::mem::drop(tauri::async_runtime::spawn(async move {
+                let client = reqwest::Client::builder()
+                    .connect_timeout(std::time::Duration::from_secs(10))
+                    .tcp_keepalive(std::time::Duration::from_secs(30))
+                    .build()
+                    .unwrap_or_else(|_| reqwest::Client::new());
+
+                let mut req = client.get(&target_url);
+                if let Some(range) = &range_header {
+                    req = req.header("Range", range.as_str());
+                }
+
+                let response = match req.send().await {
+                    Ok(r) => r,
+                    Err(e) => {
+                        warn!("online proxy fetch failed url={target_url} error={e}");
+                        if let Ok(resp) = tauri::http::Response::builder().status(502).body(Vec::new()) {
+                            responder.respond(resp);
+                        }
+                        return;
+                    }
+                };
+
+                let status = response.status().as_u16();
+                let content_type = response
+                    .headers()
+                    .get("content-type")
+                    .and_then(|v| v.to_str().ok())
+                    .unwrap_or("audio/mpeg")
+                    .to_string();
+                let content_range = response
+                    .headers()
+                    .get("content-range")
+                    .and_then(|v| v.to_str().ok())
+                    .map(|s| s.to_string());
+                let accept_ranges = response
+                    .headers()
+                    .get("accept-ranges")
+                    .and_then(|v| v.to_str().ok())
+                    .unwrap_or("bytes")
+                    .to_string();
+                let content_length = response
+                    .headers()
+                    .get("content-length")
+                    .and_then(|v| v.to_str().ok())
+                    .map(|s| s.to_string());
+
+                let bytes = match response.bytes().await {
+                    Ok(b) => b,
+                    Err(e) => {
+                        warn!("online proxy read body failed url={target_url} error={e}");
+                        if let Ok(resp) = tauri::http::Response::builder().status(502).body(Vec::new()) {
+                            responder.respond(resp);
+                        }
+                        return;
+                    }
+                };
+
+                let mut builder = tauri::http::Response::builder()
+                    .status(status)
+                    .header("content-type", content_type)
+                    .header("accept-ranges", accept_ranges);
+                if let Some(cr) = content_range {
+                    builder = builder.header("content-range", cr);
+                }
+                if let Some(cl) = content_length {
+                    builder = builder.header("content-length", cl);
+                }
+                match builder.body(bytes.to_vec()) {
+                    Ok(resp) => responder.respond(resp),
+                    Err(e) => {
+                        warn!("online proxy build response failed url={target_url} error={e}");
+                        if let Ok(resp) = tauri::http::Response::builder().status(500).body(Vec::new()) {
+                            responder.respond(resp);
+                        }
+                    }
                 }
             }));
         })

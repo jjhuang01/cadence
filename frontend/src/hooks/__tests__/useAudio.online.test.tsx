@@ -82,7 +82,9 @@ describe("useAudio online playback", () => {
       result.current.playAtIndex(0);
     });
 
-    expect(audioMock.getAudioInstance().src).toBe("https://demo.test/song.mp3");
+    expect(audioMock.getAudioInstance().src).toBe(
+      "online://proxy/https%3A%2F%2Fdemo.test%2Fsong.mp3",
+    );
     expect(audioMock.play).toHaveBeenCalledOnce();
     expect(result.current.currentIndex).toBe(0);
   });
@@ -110,7 +112,9 @@ describe("useAudio online playback", () => {
       result.current.playAtIndex(0);
     });
 
-    expect(audioMock.getAudioInstance().src).toBe("https://signed.example.com/cloud-song.mp3");
+    expect(audioMock.getAudioInstance().src).toBe(
+      "online://proxy/https%3A%2F%2Fsigned.example.com%2Fcloud-song.mp3",
+    );
     expect(audioMock.play).toHaveBeenCalledOnce();
   });
 

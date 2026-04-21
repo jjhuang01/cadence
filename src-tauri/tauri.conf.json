@@ -26,7 +26,7 @@
     ],
     "macOSPrivateApi": false,
     "security": {
-      "csp": "default-src 'self'; script-src 'self' 'unsafe-eval'; connect-src 'self' https://lrclib.net https://*.cloudflarestorage.com; img-src 'self' data:; style-src 'self' 'unsafe-inline'; media-src 'self' stream: https://*.cloudflarestorage.com blob:"
+      "csp": "default-src 'self'; script-src 'self' 'unsafe-eval'; connect-src 'self' https://lrclib.net https://*.cloudflarestorage.com; img-src 'self' data:; style-src 'self' 'unsafe-inline'; media-src 'self' stream: online: https://*.cloudflarestorage.com blob:"
     }
   },
   "bundle": {

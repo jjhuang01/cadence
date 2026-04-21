@@ -1,7 +1,6 @@
-import { useRef, useState, useCallback, useEffect } from 'react';
-import { Track } from '../types';
-import { writeRuntimeLog } from '../utils/runtimeLog';
-
+import { useRef, useState, useCallback, useEffect } from "react";
+import { Track } from "../types";
+import { writeRuntimeLog } from "../utils/runtimeLog";
 
 export function useAudio() {
   const audioRef = useRef<HTMLAudioElement>(new Audio());
@@ -24,12 +23,32 @@ export function useAudio() {
   useEffect(() => {
     const audio = audioRef.current;
     audio.volume = 0.9;
+    audio.preload = "auto";
 
     const stopPositionLoop = () => {
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
       }
+    };
+
+    const describeBuffered = () => {
+      if (audio.buffered.length === 0) return "none";
+
+      const ranges: string[] = [];
+      for (let i = 0; i < audio.buffered.length; i += 1) {
+        ranges.push(
+          `${audio.buffered.start(i).toFixed(3)}-${audio.buffered.end(i).toFixed(3)}`,
+        );
+      }
+      return ranges.join(",");
+    };
+
+    const logMediaEvent = (level: "info" | "warn", event: string) => {
+      void writeRuntimeLog(
+        level,
+        `audio event=${event} networkState=${audio.networkState} readyState=${audio.readyState} paused=${audio.paused ? "yes" : "no"} currentTime=${audio.currentTime.toFixed(3)} buffered=${describeBuffered()} src=${audio.currentSrc || audio.src || "n/a"}`,
+      );
     };
 
     const syncPosition = () => {
@@ -61,8 +80,8 @@ export function useAudio() {
       setDuration(isFinite(d) ? d : 0);
       syncPosition();
       void writeRuntimeLog(
-        'info',
-        `audio metadata loaded duration=${isFinite(d) ? d.toFixed(3) : '0'} src=${audio.currentSrc || audio.src || 'n/a'}`,
+        "info",
+        `audio metadata loaded duration=${isFinite(d) ? d.toFixed(3) : "0"} src=${audio.currentSrc || audio.src || "n/a"}`,
       );
     };
     const onSeeking = () => syncPosition();
@@ -83,12 +102,24 @@ export function useAudio() {
       setIsPlaying(true);
       startPositionLoop();
       syncPosition();
+      logMediaEvent("info", "play");
     };
     const onPause = () => {
       setIsPlaying(false);
       stopPositionLoop();
       syncPosition();
+      logMediaEvent("info", "pause");
     };
+    const onLoadStart = () => logMediaEvent("info", "loadstart");
+    const onCanPlay = () => logMediaEvent("info", "canplay");
+    const onPlaying = () => {
+      setIsPlaying(true);
+      startPositionLoop();
+      logMediaEvent("info", "playing");
+    };
+    const onWaiting = () => logMediaEvent("warn", "waiting");
+    const onStalled = () => logMediaEvent("warn", "stalled");
+    const onSuspend = () => logMediaEvent("info", "suspend");
     const onError = () => {
       stopPositionLoop();
       setIsPlaying(false);
@@ -96,34 +127,46 @@ export function useAudio() {
       if (idx !== null) setPlayError({ index: idx });
       const mediaError = audio.error;
       void writeRuntimeLog(
-        'error',
-        `audio error code=${mediaError?.code ?? 'unknown'} currentTime=${audio.currentTime.toFixed(3)} src=${audio.currentSrc || audio.src || 'n/a'}`,
+        "error",
+        `audio error code=${mediaError?.code ?? "unknown"} networkState=${audio.networkState} readyState=${audio.readyState} currentTime=${audio.currentTime.toFixed(3)} buffered=${describeBuffered()} src=${audio.currentSrc || audio.src || "n/a"}`,
       );
     };
 
-    audio.addEventListener('timeupdate', onTimeUpdate);
-    audio.addEventListener('durationchange', onDurationChange);
-    audio.addEventListener('loadedmetadata', onLoadedMetadata);
-    audio.addEventListener('seeking', onSeeking);
-    audio.addEventListener('seeked', onSeeked);
-    audio.addEventListener('ended', onEnded);
-    audio.addEventListener('play', onPlay);
-    audio.addEventListener('pause', onPause);
-    audio.addEventListener('error', onError);
+    audio.addEventListener("loadstart", onLoadStart);
+    audio.addEventListener("canplay", onCanPlay);
+    audio.addEventListener("playing", onPlaying);
+    audio.addEventListener("waiting", onWaiting);
+    audio.addEventListener("stalled", onStalled);
+    audio.addEventListener("suspend", onSuspend);
+    audio.addEventListener("timeupdate", onTimeUpdate);
+    audio.addEventListener("durationchange", onDurationChange);
+    audio.addEventListener("loadedmetadata", onLoadedMetadata);
+    audio.addEventListener("seeking", onSeeking);
+    audio.addEventListener("seeked", onSeeked);
+    audio.addEventListener("ended", onEnded);
+    audio.addEventListener("play", onPlay);
+    audio.addEventListener("pause", onPause);
+    audio.addEventListener("error", onError);
 
     return () => {
-      audio.removeEventListener('timeupdate', onTimeUpdate);
-      audio.removeEventListener('durationchange', onDurationChange);
-      audio.removeEventListener('loadedmetadata', onLoadedMetadata);
-      audio.removeEventListener('seeking', onSeeking);
-      audio.removeEventListener('seeked', onSeeked);
-      audio.removeEventListener('ended', onEnded);
-      audio.removeEventListener('play', onPlay);
-      audio.removeEventListener('pause', onPause);
-      audio.removeEventListener('error', onError);
+      audio.removeEventListener("loadstart", onLoadStart);
+      audio.removeEventListener("canplay", onCanPlay);
+      audio.removeEventListener("playing", onPlaying);
+      audio.removeEventListener("waiting", onWaiting);
+      audio.removeEventListener("stalled", onStalled);
+      audio.removeEventListener("suspend", onSuspend);
+      audio.removeEventListener("timeupdate", onTimeUpdate);
+      audio.removeEventListener("durationchange", onDurationChange);
+      audio.removeEventListener("loadedmetadata", onLoadedMetadata);
+      audio.removeEventListener("seeking", onSeeking);
+      audio.removeEventListener("seeked", onSeeked);
+      audio.removeEventListener("ended", onEnded);
+      audio.removeEventListener("play", onPlay);
+      audio.removeEventListener("pause", onPause);
+      audio.removeEventListener("error", onError);
       stopPositionLoop();
       audio.pause();
-      audio.src = '';
+      audio.src = "";
       audio.load();
     };
   }, []);
@@ -139,7 +182,7 @@ export function useAudio() {
     if (track.is_cloud && track.cloud_key) {
       const cached = presignedUrlsRef.current.get(track.cloud_key);
       if (cached) {
-        url = cached;
+        url = `online://proxy/${encodeURIComponent(cached)}`;
       } else {
         // No URL cached — trigger playError so App.tsx can fetch URL and retry
         setPlayError({ index });
@@ -147,11 +190,14 @@ export function useAudio() {
       }
     } else if (track.is_online) {
       if (!track.online_stream_url) {
-        void writeRuntimeLog('warn', `playAtIndex skipped: online track has no stream URL index=${index} title=${track.title}`);
+        void writeRuntimeLog(
+          "warn",
+          `playAtIndex skipped: online track has no stream URL index=${index} title=${track.title}`,
+        );
         setIsPlaying(false);
         return;
       }
-      url = track.online_stream_url;
+      url = `online://proxy/${encodeURIComponent(track.online_stream_url)}`;
     } else {
       url = `stream://localhost/${encodeURIComponent(track.path)}`;
     }
@@ -159,13 +205,13 @@ export function useAudio() {
     audio.src = url;
     audio.currentTime = 0;
     void writeRuntimeLog(
-      'info',
-      `audio play request index=${index} title=${track.title} cloud=${track.is_cloud ? 'yes' : 'no'} src=${url}`,
+      "info",
+      `audio play request index=${index} title=${track.title} cloud=${track.is_cloud ? "yes" : "no"} src=${url}`,
     );
-    audio.play().catch(err => {
-      console.error('Play failed:', err);
+    audio.play().catch((err) => {
+      console.error("Play failed:", err);
       void writeRuntimeLog(
-        'error',
+        "error",
         `audio play failed index=${index} title=${track.title} error=${err instanceof Error ? err.message : String(err)}`,
       );
     });
@@ -178,11 +224,11 @@ export function useAudio() {
   const togglePause = useCallback(() => {
     const audio = audioRef.current;
     if (audio.paused) {
-      audio.play().catch(err => {
-        console.error('Resume failed:', err);
+      audio.play().catch((err) => {
+        console.error("Resume failed:", err);
         void writeRuntimeLog(
-          'error',
-          `audio resume failed currentIndex=${currentIndexRef.current ?? 'none'} error=${err instanceof Error ? err.message : String(err)}`,
+          "error",
+          `audio resume failed currentIndex=${currentIndexRef.current ?? "none"} error=${err instanceof Error ? err.message : String(err)}`,
         );
       });
     } else {
@@ -215,8 +261,8 @@ export function useAudio() {
       audio.currentTime = seconds;
       setPosition(seconds);
       void writeRuntimeLog(
-        'info',
-        `audio seek seconds=${seconds.toFixed(3)} currentIndex=${currentIndexRef.current ?? 'none'}`,
+        "info",
+        `audio seek seconds=${seconds.toFixed(3)} currentIndex=${currentIndexRef.current ?? "none"}`,
       );
     }
   }, []);
@@ -227,7 +273,7 @@ export function useAudio() {
 
   const setPresignedUrl = useCallback((key: string, url: string) => {
     const cache = presignedUrlsRef.current;
-    
+
     // LRU: if cache is full, delete the oldest entry
     if (cache.size >= MAX_PRESIGNED_CACHE_SIZE && !cache.has(key)) {
       const firstKey = cache.keys().next().value;
@@ -235,7 +281,7 @@ export function useAudio() {
         cache.delete(firstKey);
       }
     }
-    
+
     cache.set(key, url);
   }, []);
 
@@ -250,7 +296,7 @@ export function useAudio() {
       rafRef.current = null;
     }
     audio.pause();
-    audio.src = '';
+    audio.src = "";
     setCurrentIndex(null);
     currentIndexRef.current = null;
     setIsPlaying(false);
